@@ -15,8 +15,15 @@ class Distribuidores:
 class Consumidores:
     def __init__(self, i):
         self.id = i
-        self.capacity = 30
-        self.level_gas = random.randrange(3, 30)
+        self.capacity = 60
+        self.level_gas = self.capacity * random.random()
+
+    def add_gas(self):
+        #volume = 60 - self.level_gas
+        self.level_gas += 60 - self.level_gas
+
+    def drive(self):
+        self.level_gas -= 6
 
     def check_gas(self):
         if self.level_gas <= 0.2 * self.capacity:
@@ -26,21 +33,40 @@ class Consumidores:
             print('Go ahead')
             return False
 
+    #def bestprice(self):
+        #self
+
+
+
 class Postos:
-    def __init__(self, p):
+    def __init__(self, p, area=None, vizinhos=None):
         self.identity = p
         self.tanque = random.randrange(200, 1000)
         self.dist_cost = 0
-        self.vizinhos = list()
+        self.loc = area
+        self.vizinhos = vizinhos
 
-
-    def comprar(self, custo):
+    def check_estoque(self):
         if self.tanque <= 200:
-            self.tanque += 800
-            self.dist_cost = custo
+            return True
+        else:
+            return False
+
+    #def comprar(self, custo):
+    #    if self.tanque <= 200:
+    #        self.tanque += 1000 - self.tanque
+    #        self.dist_cost = custo
+
+    def add_vizinhos(self, viz):
+        self.vizinhos = viz
 
     def set_price(self):
-        media = sum([i.preco for i in self.vizinhos]) / len(self.vizinhos)
+        preco_vizinho = min([i.preco for i in self.vizinhos])
+        preco_posto = self.dist_cost * 1.05
+        if preco_posto > 1.05 * preco_vizinho:
+            preco_posto = preco_vizinho * (1 + (random.randrange(0, 5) / 100))
+        else:
+            return preco_posto
 
 
 if __name__ == '__main__':
