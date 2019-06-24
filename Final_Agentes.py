@@ -6,10 +6,10 @@ import random
 
 class Distribuidores:
     def __init__(self):
-        self.custo = random.randrange(0, 10)
+        self.custo = 2
 
     def altera_custo(self, param):
-        self.custo *= param
+        self.custo *= (1+param)
 
 
 class Consumidores:
@@ -39,18 +39,21 @@ class Consumidores:
 
 
 class Postos:
-    def __init__(self, p, area=None, vizinhos=None):
+    def __init__(self, p, vizinhos=3, preco=3):
         self.identity = p
-        self.tanque = random.randrange(200, 1000)
-        self.dist_cost = 0
-        self.loc = area
+        self.tanque = random.randrange(150, 300)
+        self.dist_cost = 2
         self.vizinhos = vizinhos
+        self.preco_posto = preco
 
     def check_estoque(self):
         if self.tanque <= 200:
             return True
         else:
             return False
+
+    def venda_dia(self):
+        self.tanque -= random.randint(100, 300)
 
     #def comprar(self, custo):
     #    if self.tanque <= 200:
@@ -60,18 +63,22 @@ class Postos:
     def add_vizinhos(self, viz):
         self.vizinhos = viz
 
-    def set_price(self):
-        preco_vizinho = min([i.preco for i in self.vizinhos])
-        preco_posto = self.dist_cost * 1.05
-        if preco_posto > 1.05 * preco_vizinho:
-            preco_posto = preco_vizinho * (1 + (random.randrange(0, 5) / 100))
+    def set_price(self, postos):
+        preco_vizinho = min([i.preco_posto for i in postos])
+        self.preco_posto = self.dist_cost * 1.5
+        if self.preco_posto > 1.05 * preco_vizinho:
+            self.preco_posto = preco_vizinho * (1 + (random.randrange(0, 5) / 100))
         else:
             return preco_posto
 
 
 if __name__ == '__main__':
     d = Distribuidores()
-    c = Consumidores(1)
-    p = Postos(2)
+    c = Consumidores(200)
+    p = Postos(25)
+    d.altera_custo(0.5)
     c.check_gas()
-    print(p.tanque, c.level_gas)
+    p.add_vizinhos(3)
+    #p.set_price()
+    p.check_estoque()
+    print(p.tanque, c.level_gas, d.custo, p.vizinhos, p.venda_dia)
